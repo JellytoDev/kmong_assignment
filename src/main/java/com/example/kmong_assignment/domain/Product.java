@@ -1,11 +1,14 @@
 package com.example.kmong_assignment.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "PRODUCT")
 public class Product {
     @Id
@@ -18,4 +21,10 @@ public class Product {
 
     @Column(name = "PRODUCT_PRICE")
     private Integer price;
+
+    @Builder
+    public Product(String name, Integer price) {
+        this.name = name;
+        this.price = price;
+    }
 }

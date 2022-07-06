@@ -1,11 +1,13 @@
 package com.example.kmong_assignment.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "ORDER_PRODUCT")
 public class OrderProduct {
     @Id

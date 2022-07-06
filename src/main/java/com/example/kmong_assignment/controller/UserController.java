@@ -29,12 +29,12 @@ public class UserController {
 
         return UserSignUpRequestDto.entityToDto(joinUser);
     }
-
-    @PostMapping("/login")
-    @ResponseBody
-    public String login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
-
-
-    }
+    //
+    //@PostMapping("/login")
+    //@ResponseBody
+    //public String login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
+    //
+    //
+    //}
 
 }

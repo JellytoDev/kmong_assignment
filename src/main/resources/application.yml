@@ -1,0 +1,13 @@
+spring:
+    datasource:
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:tcp://localhost/~/kmong/test;AUTO_SERVER=true
+        username: sa
+        password: 1234
+    jpa:
+        hibernate:
+            ddl-auto: create
+            show-sql: false
+    h2:
+        console:
+            enabled: true

@@ -34,11 +34,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // jwt token으로 생성하므로 세션은 필요 없으므로 생성 안함.
                 .and()
                 .authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
-                .antMatchers("/*/signin", "/*/signup").permitAll()
+                .antMatchers("/signin", "/signup").permitAll()
                 // 가입 및 인증 주소는 누구나 접근 가능
-                .antMatchers(HttpMethod.GET, "/helloworld/**").permitAll()
+                .antMatchers("/**").permitAll()
                 // helloworld로 시작하는 get 요청 리소스는 누구나 접근 가능
-                .anyRequest().hasRole("USER")
+                //.anyRequest().hasRole("USER")
                 // 그 외 나머지 요청은 모두 인증된 회원만 접근 가능
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
@@ -46,9 +46,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // jwt token 필터를 id/password 인증 필터 전에 넣는다.
     }
 
-    @Override //
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
-                "/swagger-ui.html", "/webjars/**", "/swagger/**");
-    }
+    //@Override //
+    //public void configure(WebSecurity web) {
+    //    web.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
+    //            "/swagger-ui.html", "/webjars/**", "/swagger/**");
+    //}
 }

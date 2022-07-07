@@ -7,12 +7,13 @@ import com.example.kmong_assignment.dto.user.UserLoginResponseDto;
 import com.example.kmong_assignment.dto.user.UserSignUpRequestDto;
 import com.example.kmong_assignment.dto.user.UserSignUpResponseDto;
 import com.example.kmong_assignment.repository.UserRepository;
+import com.example.kmong_assignment.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
+import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,18 +23,23 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final UserService userService;
+
     @PostMapping("/signup")
     @ResponseBody
-    public UserSignUpResponseDto join(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
+    public UserSignUpResponseDto joint(@Valid @RequestBody UserSignUpRequestDto userSignUpRequestDto) {
 
         // 중복 체크
+        Boolean isExist = userService.joinCheck(userSignUpRequestDto.getEmail());
 
-        User joinUser = User.builder().
-                email(userSignUpRequestDto.getEmail()).
-                password(passwordEncoder.encode(userSignUpRequestDto.getPassword())).
-                build();
+        // 회원가입
+        if(!isExist){
+            return UserSignUpResponseDto.builder()
+                    .msg("email exist")
+                    .code(1).build();
+        }
 
-        userRepository.save(joinUser);
+        User joinUser = userService.join(userSignUpRequestDto.getEmail(), userSignUpRequestDto.getPassword());
 
         return UserSignUpResponseDto.builder()
                 .email(joinUser.getEmail())
@@ -44,12 +50,19 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public UserLoginResponseDto login(@RequestBody UserLoginRequestDto userLoginRequestDto) throws UserPrincipalNotFoundException {
-        User user = userRepository.findByEmail(userLoginRequestDto.getEmail()).get();
+    public UserLoginResponseDto login(@Valid @RequestBody UserLoginRequestDto userLoginRequestDto){
 
-        if (!passwordEncoder.matches(userLoginRequestDto.getPassword(), user.getPassword())) {
-            throw new UserPrincipalNotFoundException("password 맞지 않음");
+        // 로그인 체크
+        if (!userService.loginCheck(userLoginRequestDto.getEmail(),userLoginRequestDto.getPassword())) {
+            return UserLoginResponseDto.builder()
+                    .success(false)
+                    .code(1)
+                    .msg("login fail")
+                    .build();
         }
+
+        // 로그인
+        User user = userService.login(userLoginRequestDto.getEmail());
 
         return UserLoginResponseDto.builder()
                 .token(jwtTokenProvider.createToken(String.valueOf(user.getId()),user.getRoles()))
@@ -59,12 +72,10 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/test")
+    @PostMapping("/login/check")
     @ResponseBody
-    public String test(@AuthenticationPrincipal User user) {
-        //jwtTokenProvider.getAuthentication()
-        System.out.println("user.toString() = " + user.getEmail());
-        return "hello";
+    public Boolean loginCheck(@RequestBody Map<String,String> req) {
+        return userService.joinCheck(req.get("email"));
     }
 
 }

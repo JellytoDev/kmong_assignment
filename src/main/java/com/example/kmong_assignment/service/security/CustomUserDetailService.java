@@ -1,4 +1,4 @@
-package com.example.kmong_assignment.service;
+package com.example.kmong_assignment.service.security;
 
 import com.example.kmong_assignment.domain.User;
 import com.example.kmong_assignment.repository.UserRepository;
@@ -22,6 +22,5 @@ public class CustomUserDetailService implements UserDetailsService {
         //System.out.println("user.toString() = " + user.toString());
         return user;
     }
-
 
 }

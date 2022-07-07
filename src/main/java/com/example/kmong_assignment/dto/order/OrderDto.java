@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 @Data
 public class OrderDto {
+    private Long orderId;
     private Integer totalPrice;
     private Integer totalCount;
     private ArrayList<OrderProductDto> orderProductList = new ArrayList<>();
@@ -17,6 +18,7 @@ public class OrderDto {
 
     public static OrderDto entityToDto(Order order) {
         OrderDto orderDto = new OrderDto();
+        orderDto.setOrderId(order.getId());
         orderDto.setTotalCount(order.getCount());
         orderDto.setTotalPrice(order.getPrice());
         return orderDto;

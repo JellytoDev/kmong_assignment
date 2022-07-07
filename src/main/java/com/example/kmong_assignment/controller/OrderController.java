@@ -1,18 +1,19 @@
 package com.example.kmong_assignment.controller;
 
 import com.example.kmong_assignment.domain.Order;
-import com.example.kmong_assignment.domain.OrderProduct;
 import com.example.kmong_assignment.domain.Product;
 import com.example.kmong_assignment.domain.User;
 import com.example.kmong_assignment.dto.order.*;
 import com.example.kmong_assignment.repository.OrderProductRepository;
 import com.example.kmong_assignment.repository.OrderRepository;
 import com.example.kmong_assignment.repository.ProductRepository;
+import com.example.kmong_assignment.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,42 +23,30 @@ import java.util.List;
 public class OrderController {
 
     private final OrderRepository orderRepository;
-
     private final ProductRepository productRepository;
     private final OrderProductRepository orderProductRepository;
+
+    private final OrderService orderService;
 
     @PostMapping("/list")
     @ResponseBody
     public List<ProductDto> list() {
-        List<ProductDto> productDtoList = new ArrayList<>();
-        List<Product> products = productRepository.findAll();
-
-        for (Product product : products) {
-            productDtoList.add(ProductDto.entityToDto(product));
-        }
+        // db상 존재하는 판매물품 조회
+        List<ProductDto> productDtoList = orderService.getProductList();
 
         return productDtoList;
     }
 
     @PostMapping("/request")
     @ResponseBody
-    public OrderResponseDto order(@RequestBody List<OrderProductRequestDto> orderProductDtoList,
+    public OrderResponseDto order(@Valid @RequestBody List<OrderProductRequestDto> orderProductDtoList,
                                   @AuthenticationPrincipal User user) {
 
-        Order order = new Order();
-        order.setUser(user);
-        orderRepository.save(order);
+        // 주문 생성
+        //Order order = orderService.createOrder(user);
 
-        // orderProduct
-        for (OrderProductRequestDto orderProductDto : orderProductDtoList) {
-            Product product = productRepository.findById(orderProductDto.getId()).get();
-            OrderProduct orderProduct = Product.toOrderProduct(order,product,orderProductDto.getCount());
-
-            order.addOrderProduct(orderProduct);
-            order.addPriceAndCount(orderProduct.getOrderPrice(),orderProduct.getCount());
-
-            orderProductRepository.save(orderProduct);
-        }
+        Order order = orderService.createOrder(user,orderProductDtoList);
+        //orderService.addProductToOrder(order, orderProductDto);
 
         return OrderResponseDto.builder()
                 .orderId(order.getId())
@@ -69,17 +58,7 @@ public class OrderController {
     @PostMapping("/search")
     @ResponseBody
     public List<OrderDto> search(@AuthenticationPrincipal User user) {
-        ArrayList<OrderDto> list = new ArrayList<>();
-
-        List<Order> orderList = orderRepository.findAllByUser(user);
-
-        for (Order order : orderList) {
-            OrderDto orderDto = OrderDto.entityToDto(order);
-            for (OrderProduct orderProduct : order.getOrderProductList()) {
-                orderDto.addOrderProductList(OrderProductDto.entityToDto(orderProduct));
-            }
-            list.add(orderDto);
-        }
+        ArrayList<OrderDto> list = orderService.getOrderListByUser(user);
 
         return list;
     }
@@ -88,8 +67,10 @@ public class OrderController {
     public void init() {
         Product product = Product.builder().name("cake").price(10000).build();
         Product product1 = Product.builder().name("drink").price(4000).build();
+        Product product2 = Product.builder().name("apple").price(1500).build();
 
         productRepository.save(product);
         productRepository.save(product1);
+        productRepository.save(product2);
     }
 }

@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class OrderResponseDto {
     private Long orderId;
-    private Integer totalPrice;
-    private Integer totalCount;
+    private Integer totalPrice = 0;
+    private Integer totalCount = 0;
 
     @Builder
     public OrderResponseDto(Long orderId, Integer totalPrice, Integer totalCount) {

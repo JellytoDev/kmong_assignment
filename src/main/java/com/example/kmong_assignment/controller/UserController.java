@@ -19,17 +19,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
     private final UserService userService;
 
     @PostMapping("/signup")
     @ResponseBody
-    public UserSignUpResponseDto joint(@Valid @RequestBody UserSignUpRequestDto userSignUpRequestDto) {
+    public UserSignUpResponseDto join(@Valid @RequestBody UserSignUpRequestDto userSignUpRequestDto) {
 
         // 중복 체크
+        // true : 중복없음, false : 중복있음
         Boolean isExist = userService.joinCheck(userSignUpRequestDto.getEmail());
 
         // 회원가입

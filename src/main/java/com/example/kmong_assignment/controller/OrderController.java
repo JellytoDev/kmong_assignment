@@ -22,15 +22,14 @@ import java.util.List;
 @RequestMapping("/order")
 public class OrderController {
 
-    private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-    private final OrderProductRepository orderProductRepository;
 
     private final OrderService orderService;
 
     @PostMapping("/list")
     @ResponseBody
     public List<ProductDto> list() {
+
         // db상 존재하는 판매물품 조회
         List<ProductDto> productDtoList = orderService.getProductList();
 
@@ -43,10 +42,7 @@ public class OrderController {
                                   @AuthenticationPrincipal User user) {
 
         // 주문 생성
-        //Order order = orderService.createOrder(user);
-
         Order order = orderService.createOrder(user,orderProductDtoList);
-        //orderService.addProductToOrder(order, orderProductDto);
 
         return OrderResponseDto.builder()
                 .orderId(order.getId())
@@ -58,13 +54,16 @@ public class OrderController {
     @PostMapping("/search")
     @ResponseBody
     public List<OrderDto> search(@AuthenticationPrincipal User user) {
+
+        // 사용자가 주문한 목록 조회
         ArrayList<OrderDto> list = orderService.getOrderListByUser(user);
 
         return list;
     }
 
-    @PostConstruct
-    public void init() {
+    @PostMapping("/dummy")
+    public void createDummy() {
+        // 더미 데이터 생성
         Product product = Product.builder().name("cake").price(10000).build();
         Product product1 = Product.builder().name("drink").price(4000).build();
         Product product2 = Product.builder().name("apple").price(1500).build();
@@ -73,4 +72,9 @@ public class OrderController {
         productRepository.save(product1);
         productRepository.save(product2);
     }
+
+    //@PostConstruct
+    //public void init() {
+    //
+    //}
 }

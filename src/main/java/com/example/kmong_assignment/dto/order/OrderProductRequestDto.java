@@ -1,5 +1,6 @@
 package com.example.kmong_assignment.dto.order;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
@@ -13,4 +14,10 @@ public class OrderProductRequestDto {
     @Positive
     @NotBlank(message = "주문 수량을 입력해주세요")
     private Integer count;
+
+    @Builder
+    public OrderProductRequestDto(Long id, Integer count) {
+        this.id = id;
+        this.count = count;
+    }
 }

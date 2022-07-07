@@ -15,12 +15,4 @@ public class UserSignUpRequestDto {
 
     @NotBlank(message = "비밀번호는 필수값입니다")
     private String password;
-
-    //public static UserSignUpResponseDto entityToDto(User user){
-    //    UserSignUpResponseDto userSignUpResponseDto = new UserSignUpResponseDto();
-    //    userSignUpResponseDto.setEmail(user.getEmail());
-    //
-    //    userSignUpResponseDto.setId(user.getId());
-    //    return userSignUpResponseDto;
-    //};
 }

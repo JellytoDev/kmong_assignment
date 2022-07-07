@@ -1,5 +1,6 @@
 package com.example.kmong_assignment.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,9 +16,8 @@ public class OrderProduct {
     @Column(name = "ORDER_PRODUCT_ID")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
+    @Column(name = "ORDER_PRODUCT_NAME")
+    private String name;
 
     @Column(name = "ORDER_PRODUCT_COUNT")
     private Integer count;
@@ -28,4 +28,17 @@ public class OrderProduct {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORDER_ID")
     private Order order;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    @Builder
+    public OrderProduct(Long id, String name, Integer count, Integer orderPrice, Order order) {
+        this.id = id;
+        this.name = name;
+        this.count = count;
+        this.orderPrice = orderPrice;
+        this.order = order;
+    }
 }

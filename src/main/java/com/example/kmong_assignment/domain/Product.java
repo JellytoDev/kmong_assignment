@@ -27,4 +27,13 @@ public class Product {
         this.name = name;
         this.price = price;
     }
+
+    public static OrderProduct toOrderProduct(Order order,Product product,Integer count) {
+        return OrderProduct.builder()
+                .name(product.getName())
+                .count(count)
+                .orderPrice(product.getPrice() * count)
+                .order(order)
+                .build();
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.kmong_assignment.dto;
+package com.example.kmong_assignment.dto.user;
 
 import lombok.Data;
 
